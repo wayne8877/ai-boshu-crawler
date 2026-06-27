@@ -1,0 +1,36 @@
+MIT License
+
+Copyright (c) 2026 Wayne Liu (合盛钮扣厂 · Hesheng Button Factory)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+ATTRIBUTION / 致谢
+================================================================================
+
+This project is a fork of dragon-hh/ai-boshu-crawler (created 2026-06-21).
+Original architecture and Bili/Douyin ingestion patterns are credited to
+dragon-hh under the original project's license terms.
+
+本项目 fork 自 dragon-hh/ai-boshu-crawler（创建于 2026-06-21）。
+原项目的架构与 B 站/抖音采集模式归 dragon-hh 所有，按原项目许可条款致谢。
+
+Fork maintained by: Wayne Liu <wayne@hs-button.com>
+Fork repository:    https://github.com/wayne8877/ai-boshu-crawler
+Original repository: https://github.com/dragon-hh/ai-boshu-crawler

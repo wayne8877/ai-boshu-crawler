@@ -1,3 +1,10 @@
+# =============================================================================
+# DEPRECATED · 2026-06-28
+# 此文件 fork 自 dragon-hh/ai-boshu-crawler，已被 src/hs_creator_crawler/ 重写。
+# 保留作 provenance 参考。新代码请用 `hs-crawler` CLI（见 README.md）。
+# 原作者: dragon-hh · 重构: Wayne Liu (合盛钮扣厂) · License: MIT
+# =============================================================================
+
 import argparse
 import json
 import subprocess
