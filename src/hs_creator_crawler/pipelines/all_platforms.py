@@ -29,6 +29,7 @@ from ..core.exceptions import HSCrawlerError, PlatformError
 from ..core.logging import get_logger
 from ..core.models import Creator, PipelineResult, Platform, StepResult, Video
 from ..feishu import get_feishu_client
+from ..feishu.creator_loader import load_creators_from_feishu, load_creators_for_platform
 from ..platforms import get_crawler
 
 logger = get_logger(__name__)
@@ -248,14 +249,30 @@ async def run_all_platforms(args: argparse.Namespace) -> PipelineResult:
         dry_run=args.dry_run,
     )
 
-    # TODO: 后续从飞书 Base 拉博主列表（异步）
-    # 当前用 JSON 兜底（开发期）
+    # 拉博主列表（飞书 Base 优先 → 本地 JSON 兜底）
     creators_dir = Path(args.creators_dir) if args.creators_dir else Path.cwd() / "creators"
+    use_feishu = getattr(args, "from_feishu", True)  # 默认走飞书（合盛集成）
     all_creators: dict[Platform, list[Creator]] = {}
-    for platform in config.enabled_platforms:
-        json_path = creators_dir / f"{platform.value}.json"
-        all_creators[platform] = load_creators_from_json(platform, json_path)
-        log.info("creators_loaded", platform=platform.value, count=len(all_creators[platform]))
+
+    if use_feishu and config.feishu.tables.get("creators"):
+        try:
+            feishu_client = get_feishu_client(config)
+            all_creators = await load_creators_from_feishu(
+                feishu_client,
+                enabled_only=True,
+            )
+            log.info("creators_source=feishu", **{p.value: len(cs) for p, cs in all_creators.items()})
+        except Exception as exc:
+            log.warning("feishu_creators_load_failed_falling_back_to_json", error=str(exc))
+            use_feishu = False
+
+    if not use_feishu or not all_creators:
+        for platform in config.enabled_platforms:
+            json_path = creators_dir / f"{platform.value}.json"
+            loaded = load_creators_from_json(platform, json_path)
+            if loaded:
+                all_creators[platform] = loaded
+        log.info("creators_source=json_fallback", **{p.value: len(cs) for p, cs in all_creators.items()})
 
     # 编排各平台 step（并发）
     step_tasks = []
@@ -331,6 +348,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--no-skip-existing", action="store_true", help="强制重新下载/转录（忽略已有文件）")
     parser.add_argument("--dry-run", action="store_true", help="只列视频，不下载/不转录/不写飞书")
     parser.add_argument("--stop-on-error", action="store_true", help="任一 step 失败立即终止")
+    parser.add_argument(
+        "--from-feishu",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="从飞书 Base `creators` 表拉博主列表（合盛体系集成；默认开，失败时自动 fallback 到本地 JSON）",
+    )
     parser.add_argument("--log-level", default="INFO", help="DEBUG/INFO/WARNING/ERROR")
     parser.add_argument("--log-json", action="store_true", help="输出 JSON 行日志（cron/容器场景）")
     return parser.parse_args(argv)

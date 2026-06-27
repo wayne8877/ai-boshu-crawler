@@ -85,6 +85,7 @@ def _cmd_ingest(args: argparse.Namespace) -> int:
         *(["--stop-on-error"] if args.stop_on_error else []),
         "--transcribe" if args.transcribe else "--no-transcribe",
         "--sync-to-feishu" if args.sync_to_feishu else "--no-sync-to-feishu",
+        *(["--from-feishu"] if getattr(args, "from_feishu", True) else ["--no-from-feishu"]),
         "--log-level", args.log_level,
         *(["--log-json"] if args.log_json else []),
     ]
@@ -116,6 +117,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p_ingest.add_argument("--no-skip-existing", action="store_true")
     p_ingest.add_argument("--dry-run", action="store_true")
     p_ingest.add_argument("--stop-on-error", action="store_true")
+    p_ingest.add_argument(
+        "--from-feishu",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="从飞书 Base `creators` 表拉博主（合盛体系集成；默认开，失败 fallback 到本地 JSON）",
+    )
 
     p_health = sub.add_parser("health-check", help="平台连通性自检")
     p_health.add_argument("--config")
